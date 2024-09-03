@@ -13,4 +13,8 @@
 
    - NetflixGPT
        -SearchBar
+<<<<<<< HEAD
        -Movies Suggestions
+=======
+       -Movies Suggestions
+>>>>>>> 7e7a1cdd1865326be775b82a37552045f1f68c82
