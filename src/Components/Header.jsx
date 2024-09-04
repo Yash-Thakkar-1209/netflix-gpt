@@ -15,7 +15,7 @@ const Header = () => {
   const dispatch = useDispatch();
  
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    const unSubscribed = onAuthStateChanged(auth, (user) => {
       if (user) {
         // When User is Signed In or Signed Up This part Will be executed
         const { uid, email, displayName, photoURL } = user;
@@ -26,6 +26,10 @@ const Header = () => {
         dispatch(removeUser());
         navigate("/")
     }});
+
+    // UnSubscribed onAuthStateChanged API  when Header Component Are Unmounting..
+    return () => unSubscribed();
+
   }, []);
 
   const handleSignedOut = () => {
