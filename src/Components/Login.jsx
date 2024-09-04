@@ -2,32 +2,46 @@ import React, { useRef, useState } from "react";
 import Header from "./Header";
 import BackGround_Img from "../Images/IN-en-20240827-TRIFECTA-perspective_WEB_c292a608-cdc6-4686-8dc8-405bfcf753af_medium.jpg";
 import { checkValidData } from "../utils/Validate";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword} from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 import { auth } from "../utils/firebase";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/userSlice";
 
 const Login = () => {
-
   const [signInForm, setSignInForm] = useState(true);
-
   const [errorMessage, setErrorMessage] = useState("");
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const email = useRef(null);
-
   const password = useRef(null);
+  const name = useRef("");
 
   const handleBtnClick = () => {
+    let message;
 
-    // Validation
-      const message = checkValidData( email.current.value,  password.current.value);
-      setErrorMessage(message);
-  
+    if (signInForm) {
+      // Sign-in: only validate email and password
+      message = checkValidData(email.current.value, password.current.value);
+    } else {
+      // Sign-up: validate email, password, and name
+      message = checkValidData(
+        email.current.value,
+        password.current.value,
+        name.current.value
+      );
+    }
+
+    setErrorMessage(message);
+
     if (message) return;
 
     if (signInForm) {
-      // Signed in Firebase API
+      // Sign In with Firebase API
       signInWithEmailAndPassword(
         auth,
         email.current.value,
@@ -36,30 +50,47 @@ const Login = () => {
         .then((userCredential) => {
           const user = userCredential.user;
           console.log(user);
-          navigate("/browse")
+          navigate("/browse");
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
-          setErrorMessage(errorCode + "-" + errorMessage);
+          setErrorMessage(`${errorCode} - ${errorMessage}`);
         });
-    } else{
-      // SignUp Firebase API
-
+    } else {
+      // Sign Up with Firebase API
       createUserWithEmailAndPassword(
         auth,
         email.current.value,
         password.current.value
       )
         .then((userCredential) => {
-          const user = userCredential.user;
-          console.log(user);
-          navigate("/")
+          const user = auth.currentUser;
+          // Update the user profile with the display name
+          updateProfile(auth.currentUser, {
+            displayName: name.current.value,
+            photoURL: "https://avatars.githubusercontent.com/u/126601711?v=4",
+          })
+            .then(() => {
+              const { uid, email, displayName, photoURL } = user;
+              dispatch(
+                addUser({
+                  uid: uid,
+                  email: email,
+                  displayName: displayName,
+                  photoURL: photoURL,
+                })
+              );
+              navigate("/browse");
+            })
+            .catch((error) => {
+              console.log("Error updating profile:", error);
+            });
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
-          setErrorMessage(errorCode + "-" + errorMessage);
+          setErrorMessage(`${errorCode} - ${errorMessage}`);
         });
     }
   };
@@ -82,6 +113,7 @@ const Login = () => {
             type="text"
             placeholder="First Name"
             className="p-4 my-4 w-full bg-slate-600 rounded-lg"
+            ref={name}
           />
         )}
 
@@ -93,8 +125,8 @@ const Login = () => {
         />
 
         <input
-          type="text"
-          placeholder="password"
+          type="password"
+          placeholder="Password"
           className="p-4 my-4 w-full bg-slate-600 rounded-lg"
           ref={password}
         />
