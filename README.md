@@ -1,4 +1,5 @@
 # Features
+-Home Page
   -Login/Sign Up
      -Sign In / Sign Up Form 
      -Redirect to Browse Page
@@ -13,8 +14,11 @@
 
    - NetflixGPT
        -SearchBar
-<<<<<<< HEAD
        -Movies Suggestions
-=======
-       -Movies Suggestions
->>>>>>> 7e7a1cdd1865326be775b82a37552045f1f68c82
+-Browse Page
+   -Main Container
+     -VideoBackground
+     -VideoTitle
+   -SecondaryConatiner
+     -MovieList
+       -Cards
