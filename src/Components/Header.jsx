@@ -1,19 +1,36 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Logo from "../Images/Netflix_Logo_PMS.png";
-import { signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../utils/firebase";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { addUser, removeUser } from "../utils/userSlice";
 
 const Header = () => {
 
   const navigate = useNavigate();
 
-  const user = useSelector((store) => store.user)
+  const user = useSelector((store) => store.user);
+
+  const dispatch = useDispatch();
+ 
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // When User is Signed In or Signed Up This part Will be executed
+        const { uid, email, displayName, photoURL } = user;
+        dispatch(addUser({ uid:uid, email:email, displayName: displayName, photoURL: photoURL }))   
+        navigate("/browse") 
+      } else {
+        // When User is Signed Out This part Will be executed
+        dispatch(removeUser());
+        navigate("/")
+    }});
+  }, []);
+
   const handleSignedOut = () => {
     signOut(auth)
-      .then(() => {
-        navigate("/")
+      .then(() => {  
       })
       .catch((error) => {
         console.log("Error aa Raha hai");
