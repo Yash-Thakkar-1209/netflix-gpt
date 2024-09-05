@@ -16,7 +16,6 @@ const Body = () => {
       element: <Browse />,
     },
   ]);
- 
 
 
   return (

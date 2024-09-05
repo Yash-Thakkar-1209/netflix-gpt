@@ -1,13 +1,16 @@
-import React from 'react'
-import Header from './Header'
-import useNowPlayingMovies from "../Hooks/useNowPlayingMovies"
-import MainContainer from './MainContainer';
-import SecondaryConatiner from "./SecondaryConatiner"
-import usePopularMovies from '../Hooks/usePopularMovies';
-import useTopRatedMovies from '../Hooks/useTopRatedMovies';
-import useUpcomingMovies from '../Hooks/useUpcomingMovies';
+import React from "react";
+import Header from "./Header";
+import useNowPlayingMovies from "../Hooks/useNowPlayingMovies";
+import MainContainer from "./MainContainer";
+import SecondaryConatiner from "./SecondaryConatiner";
+import usePopularMovies from "../Hooks/usePopularMovies";
+import useTopRatedMovies from "../Hooks/useTopRatedMovies";
+import useUpcomingMovies from "../Hooks/useUpcomingMovies";
+import GptSearch from "./GptSearch";
+import { useSelector } from "react-redux";
 
 const Browse = () => {
+  const GPTSearch = useSelector((store) => store.gpt.showGptSearch);
 
   useNowPlayingMovies();
   usePopularMovies();
@@ -17,10 +20,16 @@ const Browse = () => {
   return (
     <div>
       <Header />
-      <MainContainer />
-      <SecondaryConatiner />
+      {GPTSearch ? (
+        <GptSearch />
+      ) : (
+        <>
+          <MainContainer />
+          <SecondaryConatiner />
+        </>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default Browse
+export default Browse;
