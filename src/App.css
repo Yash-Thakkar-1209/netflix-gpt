@@ -1,4 +1,9 @@
 .App {
   text-align: center;
 }
+.custom-scrollbar {
+  scrollbar-color: black black; /* Example colors */
+  /* OR (vendor-specific) */
+  -webkit-scrollbar-color: rebeccapurple green;
+}
 
